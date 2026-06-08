@@ -1,0 +1,111 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@import "uniwind";
+@import "./sf.css";
+
+
+/* ─── LexiTech Editorial Dark Tokens ─── */
+
+:root {
+  @variant light {
+    --app-background: oklch(0.12 0 0);
+    --app-foreground: oklch(0.94 0.01 85);
+    --app-card: oklch(0.15 0 0);
+    --app-muted: oklch(0.15 0 0);
+    --app-muted-foreground: oklch(0.65 0.01 85);
+    --app-border: oklch(0.28 0 0);
+    --app-secondary: oklch(0.15 0 0);
+    --app-accent: oklch(0.18 0 0);
+    --app-sidebar: oklch(0.15 0 0);
+    --app-primary: oklch(0.72 0.08 85);
+    --app-primary-foreground: oklch(0 0 0);
+    --app-primary-muted: oklch(0.18 0 0);
+    --app-destructive: oklch(0.58 0.15 25);
+    --app-shadow-card: none;
+    --app-shadow-float: none;
+  }
+
+  @variant dark {
+    --app-background: oklch(0.12 0 0);
+    --app-foreground: oklch(0.94 0.01 85);
+    --app-card: oklch(0.15 0 0);
+    --app-muted: oklch(0.15 0 0);
+    --app-muted-foreground: oklch(0.65 0.01 85);
+    --app-border: oklch(0.28 0 0);
+    --app-secondary: oklch(0.15 0 0);
+    --app-accent: oklch(0.18 0 0);
+    --app-sidebar: oklch(0.15 0 0);
+    --app-primary: oklch(0.72 0.08 85);
+    --app-primary-foreground: oklch(0 0 0);
+    --app-primary-muted: oklch(0.18 0 0);
+    --app-destructive: oklch(0.58 0.15 25);
+    --app-shadow-card: none;
+    --app-shadow-float: none;
+  }
+}
+
+
+@theme {
+  --color-background: var(--app-background);
+  --color-foreground: var(--app-foreground);
+  --color-card: var(--app-card);
+  --color-muted: var(--app-muted);
+  --color-muted-foreground: var(--app-muted-foreground);
+  --color-border: var(--app-border);
+  --color-secondary: var(--app-secondary);
+  --color-accent: var(--app-accent);
+  --color-sidebar: var(--app-sidebar);
+  --color-primary: var(--app-primary);
+  --color-primary-foreground: var(--app-primary-foreground);
+  --color-primary-muted: var(--app-primary-muted);
+  --color-destructive: var(--app-destructive);
+
+  --font-sans: DMSans_400Regular, system-ui, sans-serif;
+
+  --shadow-card: none;
+  --shadow-float: none;
+
+  --animate-fade-up: fade-up 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.sidebar-toggle-hover {
+  display: none;
+}
+.sidebar-toggle-btn:hover .sidebar-toggle-default {
+  display: none;
+}
+.sidebar-toggle-btn:hover .sidebar-toggle-hover {
+  display: flex;
+}
+
+@media android {
+  :root {
+    --font-mono: DMMono_400Regular, monospace;
+    --font-rounded: DMSans_400Regular, normal;
+    --font-serif: PlayfairDisplay_700Bold, serif;
+    --font-sans: DMSans_400Regular, system-ui, sans-serif;
+  }
+}
+
+@media ios {
+  :root {
+    --font-mono: DMMono_400Regular, ui-monospace;
+    --font-serif: PlayfairDisplay_700Bold, ui-serif;
+    --font-sans: DMSans_400Regular, system-ui, sans-serif;
+    --font-rounded: DMSans_400Regular, ui-rounded;
+  }
+}
