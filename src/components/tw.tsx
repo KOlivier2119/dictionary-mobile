@@ -1,17 +1,36 @@
 import { BlurView as EXBlurView } from "expo-blur";
 import {
-  GlassView as XGlassView,
-  isLiquidGlassAvailable,
+    isLiquidGlassAvailable,
+    GlassView as XGlassView,
 } from "expo-glass-effect";
 import { Image as XImage } from "expo-image";
-import { StyleSheet, type ViewStyle } from "react-native";
+import { StyleSheet, View, type ViewStyle } from "react-native";
 import { withUniwind } from "uniwind";
 
+import { globalStyles, IS_WEB } from "@/utils/tailwind";
 import { KeyboardGestureArea as XKeyboardGestureArea } from "react-native-keyboard-controller";
 import Animated from "react-native-reanimated";
 import { SafeAreaView as XSafeAreaView } from "react-native-safe-area-context";
 
 export const SafeAreaView = withUniwind(XSafeAreaView);
+
+type ScreenShellProps = {
+  children: React.ReactNode;
+  style?: ViewStyle;
+  edges?: ("top" | "bottom" | "left" | "right")[];
+};
+
+export function ScreenShell({ children, style, edges }: ScreenShellProps) {
+  if (IS_WEB) {
+    return <View style={[globalStyles.screen, style]}>{children}</View>;
+  }
+
+  return (
+    <SafeAreaView style={[globalStyles.screen, style]} edges={edges}>
+      {children}
+    </SafeAreaView>
+  );
+}
 
 export const Image = withUniwind(XImage);
 export const KeyboardGestureArea = withUniwind(XKeyboardGestureArea);

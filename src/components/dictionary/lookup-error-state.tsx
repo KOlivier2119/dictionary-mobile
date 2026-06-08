@@ -4,6 +4,7 @@ import {
     fonts,
     globalStyles,
     spacing,
+    USE_NATIVE_DRIVER,
 } from "@/utils/tailwind";
 import { useEffect, useRef } from "react";
 import {
@@ -25,13 +26,13 @@ export function LoadingBar() {
           toValue: 0.3,
           duration: 400,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: USE_NATIVE_DRIVER,
         }),
         Animated.timing(opacity, {
           toValue: 1,
           duration: 400,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: USE_NATIVE_DRIVER,
         }),
       ]),
     );
@@ -41,7 +42,11 @@ export function LoadingBar() {
 
   return (
     <Animated.View
-      style={[globalStyles.loadingBar, styles.loadingBarWrap, { opacity }]}
+      style={StyleSheet.flatten([
+        globalStyles.loadingBar,
+        styles.loadingBarWrap,
+        { opacity },
+      ])}
     />
   );
 }

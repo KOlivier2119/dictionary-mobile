@@ -1,40 +1,8 @@
 import { useSearchHistory } from "@/context/search-history-context";
 import { colors, fonts, globalStyles, spacing } from "@/utils/tailwind";
-import * as Tooltip from "@radix-ui/react-tooltip";
-import { Link, usePathname } from "expo-router";
+import { usePathname, useRouter, type Href } from "expo-router";
 import { PanelLeft, PanelLeftOpen } from "lucide-react";
-import type { ReactNode } from "react";
-import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
-
-function SidebarTooltip({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          side="right"
-          sideOffset={8}
-          className="z-[100] rounded-lg bg-[#F0EDE6] px-3 py-1.5 text-[13px] text-[#0D0D0D] animate-fade-up"
-        >
-          {label}
-          <Tooltip.Arrow className="fill-[#F0EDE6]" />
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
-  );
-}
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function Sidebar({
   isOpen,
@@ -48,7 +16,10 @@ export function Sidebar({
   onCollapse: () => void;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { history } = useSearchHistory();
+
+  const sidebarWidth = isCollapsed ? 48 : 280;
 
   return (
     <>
@@ -58,26 +29,28 @@ export function Sidebar({
         className={`fixed inset-0 z-40 md:hidden ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        style={viewStyles.overlay}
+        style={styles.overlay}
       />
 
       <View
-        style={[
-          viewStyles.sidebar,
-          { width: isCollapsed ? 48 : 280 },
-          isOpen ? viewStyles.sidebarOpen : viewStyles.sidebarClosed,
-        ]}
+        className={`fixed left-0 top-0 z-50 flex h-dvh flex-col md:relative md:z-auto ${
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+        style={StyleSheet.flatten([
+          styles.sidebar,
+          { width: sidebarWidth },
+        ])}
       >
         {!isCollapsed && (
           <>
-            <View style={viewStyles.headerBlock}>
+            <View style={styles.headerBlock}>
               <Text style={textStyles.headerTitle}>History</Text>
               <View style={globalStyles.divider} />
             </View>
 
             <ScrollView
-              style={viewStyles.scroll}
-              contentContainerStyle={viewStyles.scrollContent}
+              style={styles.scroll}
+              contentContainerStyle={styles.scrollContent}
             >
               {history.length === 0 ? (
                 <Text style={textStyles.emptyText}>
@@ -88,62 +61,63 @@ export function Sidebar({
                   const href = `/word/${encodeURIComponent(item.word)}`;
                   const isActive = pathname === href;
                   return (
-                    <Link key={item.word} href={href as any} asChild>
-                      <Pressable
-                        style={[
-                          viewStyles.historyItem,
-                          isActive && viewStyles.historyItemActive,
-                        ]}
+                    <Pressable
+                      key={item.word}
+                      onPress={() => router.push(href as Href)}
+                      style={StyleSheet.flatten([
+                        styles.historyItem,
+                        isActive ? styles.historyItemActive : null,
+                      ])}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={StyleSheet.flatten([
+                          textStyles.historyText,
+                          isActive ? textStyles.historyTextActive : null,
+                        ])}
                       >
-                        <Text
-                          numberOfLines={1}
-                          style={[
-                            textStyles.historyText,
-                            isActive && textStyles.historyTextActive,
-                          ]}
-                        >
-                          {item.word}
-                        </Text>
-                        <Text style={textStyles.chevron}>›</Text>
-                      </Pressable>
-                    </Link>
+                        {item.word}
+                      </Text>
+                      <Text style={textStyles.chevron}>›</Text>
+                    </Pressable>
                   );
                 })
               )}
             </ScrollView>
 
-            <View style={viewStyles.footer}>
+            <View style={styles.footer}>
               <View style={globalStyles.divider} />
-              <Link href="/" asChild>
-                <Pressable style={viewStyles.footerButton}>
-                  <Text style={textStyles.footerButtonText}>Search</Text>
-                </Pressable>
-              </Link>
+              <Pressable
+                onPress={() => router.push("/")}
+                style={styles.footerButton}
+              >
+                <Text style={textStyles.footerButtonText}>Search</Text>
+              </Pressable>
             </View>
           </>
         )}
 
         {isCollapsed && (
-          <Tooltip.Provider delayDuration={200}>
-            <View style={viewStyles.collapsedControls}>
-              <SidebarTooltip label="Open sidebar">
-                <Pressable onPress={onCollapse} style={viewStyles.collapsedButton}>
-                  <PanelLeft size={18} strokeWidth={1.5} color={colors.primary} />
-                </Pressable>
-              </SidebarTooltip>
-            </View>
-          </Tooltip.Provider>
+          <View style={styles.collapsedControls}>
+            <Pressable
+              onPress={onCollapse}
+              accessibilityLabel="Open sidebar"
+              style={styles.collapsedButton}
+            >
+              <PanelLeft size={18} strokeWidth={1.5} color={colors.primary} />
+            </Pressable>
+          </View>
         )}
 
-        {isCollapsed && <View style={viewStyles.flexSpacer} />}
+        {isCollapsed && <View style={styles.flexSpacer} />}
 
         {!isCollapsed && (
-          <Pressable onPress={onCollapse} style={viewStyles.collapseButton}>
+          <Pressable onPress={onCollapse} style={styles.collapseButton}>
             <PanelLeftOpen size={18} strokeWidth={1.5} color={colors.textMuted} />
           </Pressable>
         )}
 
-        <View style={viewStyles.goldEdge} />
+        <View style={styles.goldEdge} />
       </View>
     </>
   );
@@ -151,30 +125,18 @@ export function Sidebar({
 
 export function SidebarToggle({ onPress }: { onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} style={viewStyles.toggleButton}>
+    <Pressable onPress={onPress} style={styles.toggleButton}>
       <PanelLeft size={18} strokeWidth={1.5} color={colors.primary} />
     </Pressable>
   );
 }
 
-const viewStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   overlay: {
     backgroundColor: colors.overlay,
   },
   sidebar: {
-    position: "fixed",
-    left: 0,
-    top: 0,
-    zIndex: 50,
-    flex: 1,
-    flexDirection: "column",
     backgroundColor: colors.surface,
-  },
-  sidebarOpen: {
-    transform: [{ translateX: 0 }],
-  },
-  sidebarClosed: {
-    transform: [{ translateX: -280 }],
   },
   goldEdge: {
     position: "absolute",

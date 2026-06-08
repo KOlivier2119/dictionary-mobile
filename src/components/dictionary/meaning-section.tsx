@@ -9,6 +9,7 @@ import {
     fonts,
     globalStyles,
     spacing,
+    USE_NATIVE_DRIVER,
 } from "@/utils/tailwind";
 import { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
@@ -28,7 +29,7 @@ function DefinitionItem({
       duration: 300,
       delay: index * 80,
       easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
+      useNativeDriver: USE_NATIVE_DRIVER,
     }).start();
   }, [index, opacity]);
 

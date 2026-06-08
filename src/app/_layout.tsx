@@ -4,6 +4,7 @@ import {
     useDrawer,
 } from "@/components/drawer-content";
 import { DrawerLayout } from "@/components/drawer-layout";
+import { SplashPlaceholder } from "@/components/splash-placeholder";
 import { SearchHistoryProvider } from "@/context/search-history-context";
 import "@/global.css";
 import { useAppFonts } from "@/hooks/use-app-fonts";
@@ -21,7 +22,6 @@ import { SafeAreaListener } from "react-native-safe-area-context";
 import { Uniwind } from "uniwind";
 
 const GLASS = isLiquidGlassAvailable();
-const IS_ANDROID = process.env.EXPO_OS === "android";
 
 function ThemeProvider(props: { children: React.ReactNode }) {
   return (
@@ -45,7 +45,7 @@ export default function RootLayout() {
   }, []);
 
   if (!fontsLoaded) {
-    return null;
+    return <SplashPlaceholder />;
   }
 
   return (
@@ -80,9 +80,6 @@ function RootDrawer() {
           onNavigate={(path) => {
             closeDrawer();
             router.replace(path, { withAnchor: true });
-          }}
-          onOpenModal={(path) => {
-            router.navigate(path);
           }}
         />
       }
@@ -124,14 +121,6 @@ function StackLayout() {
         options={{
           title: "Word",
           headerLargeTitleShadowVisible: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="(settings)"
-        options={{
-          presentation: IS_ANDROID ? undefined : "modal",
-          headerShown: false,
         }}
       />
     </Stack>

@@ -1,5 +1,5 @@
 import { useAudioPlayback } from "@/hooks/use-audio-playback";
-import { colors, spacing } from "@/utils/tailwind";
+import { colors, spacing, USE_NATIVE_DRIVER } from "@/utils/tailwind";
 import { useRef } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
@@ -70,13 +70,13 @@ export function PronunciationButton({ urls }: { urls: string[] }) {
         toValue: 1.2,
         duration: 100,
         easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
+        useNativeDriver: USE_NATIVE_DRIVER,
       }),
       Animated.timing(scale, {
         toValue: 1,
         duration: 100,
         easing: Easing.in(Easing.ease),
-        useNativeDriver: true,
+        useNativeDriver: USE_NATIVE_DRIVER,
       }),
     ]).start();
   }

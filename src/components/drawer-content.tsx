@@ -38,9 +38,51 @@ export function DrawerProvider({ children }: { children: React.ReactNode }) {
 export function useDrawer() {
   const context = use(DrawerContext);
   if (!context) {
+    if (process.env.EXPO_OS === "web") {
+      return {
+        isOpen: false,
+        openDrawer: () => {},
+        closeDrawer: () => {},
+      };
+    }
     throw new Error("useDrawer must be used within a DrawerProvider");
   }
   return context;
+}
+
+export function HistoryMenuButton({
+  buttonStyle,
+  iconStyle,
+}: {
+  buttonStyle?: object;
+  iconStyle?: object;
+}) {
+  if (process.env.EXPO_OS === "web") {
+    return null;
+  }
+
+  return <NativeHistoryMenuButton buttonStyle={buttonStyle} iconStyle={iconStyle} />;
+}
+
+function NativeHistoryMenuButton({
+  buttonStyle,
+  iconStyle,
+}: {
+  buttonStyle?: object;
+  iconStyle?: object;
+}) {
+  const { openDrawer } = useDrawer();
+
+  return (
+    <Pressable
+      onPress={openDrawer}
+      accessibilityLabel="Open history"
+      accessibilityRole="button"
+      style={[styles.menuButton, buttonStyle]}
+    >
+      <Text style={[styles.menuIcon, iconStyle]}>☰</Text>
+    </Pressable>
+  );
 }
 
 function DrawerHistoryItem({
@@ -70,10 +112,8 @@ function DrawerHistoryItem({
 
 export function DrawerContent({
   onNavigate,
-  onOpenModal,
 }: {
   onNavigate: (path: Href) => void;
-  onOpenModal: (path: Href) => void;
 }) {
   const { history } = useSearchHistory();
   const pathname = usePathname();
@@ -112,17 +152,6 @@ export function DrawerContent({
 
       <View style={styles.footer}>
         <View style={globalStyles.divider} />
-        <Pressable
-          onPress={() => {
-            if (process.env.EXPO_OS === "android") {
-              onNavigate("/(settings)/settings");
-            }
-            onOpenModal("/(settings)/settings");
-          }}
-          style={styles.footerButton}
-        >
-          <Text style={styles.footerButtonText}>Settings</Text>
-        </Pressable>
         <Pressable onPress={() => onNavigate("/")} style={styles.footerButton}>
           <Text style={styles.footerButtonText}>Search</Text>
         </Pressable>
@@ -210,5 +239,16 @@ const styles = StyleSheet.create({
     fontFamily: fonts.dmSansRegular,
     fontSize: 15,
     color: colors.textMuted,
+  },
+  menuButton: {
+    minWidth: 48,
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  menuIcon: {
+    fontFamily: fonts.dmSansRegular,
+    fontSize: 22,
+    color: colors.primary,
   },
 });

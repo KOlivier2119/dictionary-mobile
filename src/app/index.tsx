@@ -1,5 +1,6 @@
 import { LoadingBar, LookupErrorState } from "@/components/dictionary/lookup-error-state";
-import { useDrawer } from "@/components/drawer-content";
+import { HistoryMenuButton } from "@/components/drawer-content";
+import { ScreenShell } from "@/components/tw";
 import { useSearchHistory } from "@/context/search-history-context";
 import { useDictionaryLookup } from "@/hooks/use-dictionary-lookup";
 import {
@@ -18,11 +19,9 @@ import {
     TextInput,
     View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SearchScreen() {
   const router = useRouter();
-  const { openDrawer } = useDrawer();
   const { lookup, isLoading, error, retry } = useDictionaryLookup();
   const { addWord } = useSearchHistory();
   const [query, setQuery] = useState("");
@@ -48,20 +47,16 @@ export default function SearchScreen() {
 
   return (
     <>
-      <SafeAreaView style={globalStyles.screen} edges={["top", "bottom"]}>
+      <ScreenShell edges={["top", "bottom"]}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <Pressable
-            onPress={openDrawer}
-            accessibilityLabel="Open history"
-            accessibilityRole="button"
-            style={styles.menuButton}
-          >
-            <Text style={styles.menuIcon}>☰</Text>
-          </Pressable>
+          <HistoryMenuButton
+            buttonStyle={styles.menuButton}
+            iconStyle={styles.menuIcon}
+          />
 
           <View style={styles.brandBlock}>
             <Text style={styles.brandTitle}>LexiTech</Text>
@@ -94,7 +89,10 @@ export default function SearchScreen() {
           <Pressable
             disabled={isLoading}
             onPress={handleSearch}
-            style={[globalStyles.primaryButton, isLoading && styles.buttonDisabled]}
+            style={StyleSheet.flatten([
+              globalStyles.primaryButton,
+              isLoading ? styles.buttonDisabled : null,
+            ])}
           >
             <Text style={globalStyles.primaryButtonText}>Search</Text>
           </Pressable>
@@ -112,7 +110,7 @@ export default function SearchScreen() {
             </View>
           ) : null}
         </ScrollView>
-      </SafeAreaView>
+      </ScreenShell>
     </>
   );
 }

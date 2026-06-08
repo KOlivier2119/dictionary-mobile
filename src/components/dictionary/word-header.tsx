@@ -1,7 +1,7 @@
 import { PronunciationButton } from "@/components/dictionary/pronunciation-button";
 import type { DictionaryEntry } from "@/types/dictionary";
 import { getAllAudioUrls, getPhoneticTexts } from "@/types/dictionary";
-import { colors, fonts, spacing } from "@/utils/tailwind";
+import { colors, fonts, spacing, USE_NATIVE_DRIVER } from "@/utils/tailwind";
 import { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 
@@ -16,13 +16,13 @@ export function WordHeader({ entries }: { entries: DictionaryEntry[] }) {
         toValue: 1,
         duration: 300,
         easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
+        useNativeDriver: USE_NATIVE_DRIVER,
       }),
       Animated.timing(translateY, {
         toValue: 0,
         duration: 300,
         easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
+        useNativeDriver: USE_NATIVE_DRIVER,
       }),
     ]).start();
   }, [opacity, translateY]);

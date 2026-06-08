@@ -6,6 +6,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const IS_WEB = process.env.EXPO_OS === "web";
+export const USE_NATIVE_DRIVER = !IS_WEB;
+
 export const colors = {
   background: "#0D0D0D",
   surface: "#161616",

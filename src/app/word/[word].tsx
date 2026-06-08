@@ -4,27 +4,40 @@ import {
 } from "@/components/dictionary/lookup-error-state";
 import { MeaningSection } from "@/components/dictionary/meaning-section";
 import { WordHeader } from "@/components/dictionary/word-header";
-import { useDrawer } from "@/components/drawer-content";
+import { HistoryMenuButton } from "@/components/drawer-content";
+import { ScreenShell } from "@/components/tw";
 import { useSearchHistory } from "@/context/search-history-context";
 import { useDictionaryLookup } from "@/hooks/use-dictionary-lookup";
-import { colors, fonts, globalStyles, spacing } from "@/utils/tailwind";
+import { colors, fonts, globalStyles, IS_WEB, spacing } from "@/utils/tailwind";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 function DrawerMenuButton() {
-  const { openDrawer } = useDrawer();
+  return (
+    <HistoryMenuButton
+      buttonStyle={headerStyles.menuButton}
+      iconStyle={headerStyles.menuIcon}
+    />
+  );
+}
+
+function WordScreenOptions({
+  title,
+}: {
+  title: string;
+}) {
+  if (IS_WEB) {
+    return null;
+  }
 
   return (
-    <Pressable
-      onPress={openDrawer}
-      accessibilityLabel="Open history"
-      accessibilityRole="button"
-      style={headerStyles.menuButton}
-    >
-      <Text style={headerStyles.menuIcon}>☰</Text>
-    </Pressable>
+    <Stack.Screen
+      options={{
+        title,
+        headerRight: () => <DrawerMenuButton />,
+      }}
+    />
   );
 }
 
@@ -46,7 +59,7 @@ export default function WordDetailScreen() {
 
   if (!decodedWord) {
     return (
-      <SafeAreaView style={globalStyles.screen} edges={["bottom"]}>
+      <ScreenShell edges={["bottom"]}>
         <LookupErrorState
           error={{
             kind: "invalid_response",
@@ -54,47 +67,32 @@ export default function WordDetailScreen() {
             word: "",
           }}
         />
-      </SafeAreaView>
+      </ScreenShell>
     );
   }
 
   if (isLoading) {
     return (
-      <SafeAreaView style={globalStyles.screen} edges={["bottom"]}>
-        <Stack.Screen
-          options={{
-            title: decodedWord,
-            headerRight: () => <DrawerMenuButton />,
-          }}
-        />
+      <ScreenShell edges={["bottom"]}>
+        <WordScreenOptions title={decodedWord} />
         <LookupLoadingState />
-      </SafeAreaView>
+      </ScreenShell>
     );
   }
 
   if (error) {
     return (
-      <SafeAreaView style={globalStyles.screen} edges={["bottom"]}>
-        <Stack.Screen
-          options={{
-            title: decodedWord,
-            headerRight: () => <DrawerMenuButton />,
-          }}
-        />
+      <ScreenShell edges={["bottom"]}>
+        <WordScreenOptions title={decodedWord} />
         <LookupErrorState error={error} onRetry={retry} />
-      </SafeAreaView>
+      </ScreenShell>
     );
   }
 
   if (!data || data.length === 0) {
     return (
-      <SafeAreaView style={globalStyles.screen} edges={["bottom"]}>
-        <Stack.Screen
-          options={{
-            title: decodedWord,
-            headerRight: () => <DrawerMenuButton />,
-          }}
-        />
+      <ScreenShell edges={["bottom"]}>
+        <WordScreenOptions title={decodedWord} />
         <LookupErrorState
           error={{
             kind: "not_found",
@@ -103,26 +101,20 @@ export default function WordDetailScreen() {
           }}
           onRetry={retry}
         />
-      </SafeAreaView>
+      </ScreenShell>
     );
   }
 
   let meaningIndex = 0;
 
   return (
-    <SafeAreaView style={globalStyles.screen} edges={["bottom"]}>
+    <ScreenShell edges={["bottom"]}>
+      <WordScreenOptions title={data[0]?.word ?? decodedWord} />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={globalStyles.screenContent}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <Stack.Screen
-          options={{
-            title: data[0]?.word ?? decodedWord,
-            headerRight: () => <DrawerMenuButton />,
-          }}
-        />
-
         <WordHeader entries={data} />
 
         {data.map((entry, entryIndex) => (
@@ -141,7 +133,7 @@ export default function WordDetailScreen() {
           </View>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </ScreenShell>
   );
 }
 
