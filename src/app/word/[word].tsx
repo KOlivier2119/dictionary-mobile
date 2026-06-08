@@ -1,6 +1,6 @@
 import {
-    LookupErrorState,
-    LookupLoadingState,
+  LookupErrorState,
+  LookupLoadingState,
 } from "@/components/dictionary/lookup-error-state";
 import { MeaningSection } from "@/components/dictionary/meaning-section";
 import { WordHeader } from "@/components/dictionary/word-header";
@@ -75,7 +75,7 @@ export default function WordDetailScreen() {
     return (
       <ScreenShell edges={["bottom"]}>
         <WordScreenOptions title={decodedWord} />
-        <LookupLoadingState />
+        <LookupLoadingState word={decodedWord} />
       </ScreenShell>
     );
   }

@@ -1,23 +1,24 @@
-import { LoadingBar, LookupErrorState } from "@/components/dictionary/lookup-error-state";
+import { DictionarySearchLoader } from "@/components/dictionary/dictionary-loader";
+import { LookupErrorState } from "@/components/dictionary/lookup-error-state";
 import { HistoryMenuButton } from "@/components/drawer-content";
 import { ScreenShell } from "@/components/tw";
 import { useSearchHistory } from "@/context/search-history-context";
 import { useDictionaryLookup } from "@/hooks/use-dictionary-lookup";
 import {
-    colors,
-    fonts,
-    globalStyles,
-    spacing,
+  colors,
+  fonts,
+  globalStyles,
+  spacing,
 } from "@/utils/tailwind";
 import { useRouter, type Href } from "expo-router";
 import { useState } from "react";
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 export default function SearchScreen() {
@@ -80,7 +81,6 @@ export default function SearchScreen() {
               returnKeyType="search"
               onSubmitEditing={handleSearch}
             />
-            {isLoading ? <LoadingBar /> : null}
             {validationError ? (
               <Text style={styles.validationError}>{validationError}</Text>
             ) : null}
@@ -96,6 +96,10 @@ export default function SearchScreen() {
           >
             <Text style={globalStyles.primaryButtonText}>Search</Text>
           </Pressable>
+
+          {isLoading ? (
+            <DictionarySearchLoader word={query.trim()} />
+          ) : null}
 
           {error ? (
             <View style={styles.errorWrap}>
