@@ -1,5 +1,6 @@
 export {
     AlertCircle,
+    ArrowRight,
     BookOpen,
     BookOpenCheck,
     BookX,
